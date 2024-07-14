@@ -57,7 +57,7 @@ BRC() {
 MergeRT() {
     local input_bam="$1"
     local base_name=$(basename "$input_bam" | sed 's/^sorted_//')
-    local output_table="md_${base_name}.table"
+    local output_table="${base_name}.table"
 
     # Find all matching table files and join them with -I flag
     local input_tables=$(ls tmp*${base_name}*.table | xargs -I {} echo -I {})
@@ -76,7 +76,7 @@ ApplyBQSR() {
     local input_bam="$1"
     local base_name=$(basename "$input_bam" | sed 's/^sorted_//')
     local input_table="${base_name}.table"
-    local output_bam="Recalibrated_${base_name}.bam"
+    local output_bam="Recalibrated_${base_name}"
     
     gatk --java-options "-XX:ConcGCThreads=1" ApplyBQSRSpark \
         -I "$input_bam" \
@@ -115,7 +115,8 @@ echo "All BAM files have been BQSR"
 
 rm -r md_tmp
 rm tmp.exons.list
-
+rm tmp*.table
+rm exons_split*
 end_time=$(date +"%Y-%m-%d %H:%M:%S")
 start_seconds=$(date -d "$start_time" +%s)
 end_seconds=$(date -d "$end_time" +%s)
